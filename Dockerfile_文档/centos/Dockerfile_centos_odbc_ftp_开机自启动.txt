@@ -1,0 +1,17 @@
+FROM centos7_db:v1
+
+COPY ./self_starting.sh /
+
+RUN yum -y update && \
+	yum -y install dos2unix && \
+	yum -y install iproute && \
+	yum -y install  net-tools && \
+	dos2unix /self_starting.sh  && \
+	yum -y install vsftpd && \
+    systemctl enable vsftpd.service && \
+    chmod +x /self_starting.sh
+
+WORKDIR /
+ENTRYPOINT /self_starting.sh && tail -f /dev/null
+	
+CMD ["/bin/bash"]

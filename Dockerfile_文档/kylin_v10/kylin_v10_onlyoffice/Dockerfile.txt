@@ -1,0 +1,19 @@
+FROM onlyoffice:u3
+
+COPY ./self_starting.sh /
+
+RUN mkdir -p /var/log/onlyoffice/documentserver/docservice/ && \
+	mkdir -p /var/log/onlyoffice/documentserver/converter/ && \
+	mkdir -p /var/log/onlyoffice/documentserver/metrics/ && \
+	mkdir -p /var/log/onlyoffice/documentserver-example/  && \
+	apt_get -y update && \
+	apt_get -y install dos2unix && \
+	apt_get -y install iproute && \
+	apt_get -y install  net-tools && \
+	dos2unix /self_starting.sh  && \
+    chmod +x /self_starting.sh
+
+WORKDIR /
+ENTRYPOINT /self_starting.sh && tail -f /dev/null
+	
+CMD ["/bin/bash"]
