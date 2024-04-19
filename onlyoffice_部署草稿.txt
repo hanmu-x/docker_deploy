@@ -1,0 +1,341 @@
+
+
+
+sudo docker pull onlyoffice/documentserver
+
+
+
+$ docker run -i -t -d -p 9001:80 -v /data/aws_s3/file-storage:/var/www/onlyoffice/documentserver/web-apps/wsData onlyoffice/documentserver
+
+
+sudo docker run -i -t -d -p 80:80 --restart=always -e JWT_SECRET=my_jwt_secret onlyoffice/documentserver
+
+
+sudo  docker run -it -p 9080:80  --name ofsvr onlyoffice/documentserver
+
+
+
+
+netstat -tnlp
+
+ss -ntl
+
+root@2d6af0d86a41:/# netstat -tnlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:25672           0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:4369            0.0.0.0:*               LISTEN      -                   
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      672/nginx: master p 
+tcp6       0      0 :::8000                 :::*                    LISTEN      -                   
+tcp6       0      0 :::8126                 :::*                    LISTEN      -                   
+tcp6       0      0 :::5672                 :::*                    LISTEN      -                   
+tcp6       0      0 :::4369                 :::*                    LISTEN      -                   
+tcp6       0      0 :::80                   :::*                    LISTEN      672/nginx: master p 
+root@2d6af0d86a41:/# ss -ntl
+State       Recv-Q      Send-Q           Local Address:Port            Peer Address:Port     Process     
+LISTEN      0           244                  127.0.0.1:5432                 0.0.0.0:*                    
+LISTEN      0           128                    0.0.0.0:25672                0.0.0.0:*                    
+LISTEN      0           4096                   0.0.0.0:4369                 0.0.0.0:*                    
+LISTEN      0           511                    0.0.0.0:80                   0.0.0.0:*                    
+LISTEN      0           511                          *:8000                       *:*                    
+LISTEN      0           511                          *:8126                       *:*                    
+LISTEN      0           128                          *:5672                       *:*                    
+LISTEN      0           4096                      [::]:4369                    [::]:*                    
+LISTEN      0           511                       [::]:80                      [::]:*   
+
+sudo docker run -i -t -d -p 9090:80 --restart=always -e JWT_SECRET=my_jwt_secret --name only_1 onlyoffice/documentserver
+
+
+docker run -idt -p 9001:80 --name=onlyoffice --privileged=true -v /app/onlyoffice/nginx/log:/var/log/nginx -v /app/onlyoffice/nginx/default:/etc/nginx/sites-enabled/default docker.io/onlyoffice/documentserver
+
+
+sudo docker run -it -p 9090:80  --name only_1 onlyoffice/documentserver
+sudo docker run -it -p 9090:80  --name only_1 onlyoffice/documentserver:7.1
+sudo docker run -it -p 9090:80  --name only_5 onlyoffice/documentserver:5.3.4.3
+sudo docker run -it -p 9090:80  --name only_70 onlyoffice/documentserver:7.0
+
+
+192.168.0.196:9090
+
+curl "http://127.0.0.1:9090"
+
+
+#下载erlang
+wget http://www.rabbitmq.com/releases/erlang/erlang-17.4-1.el6.x86_64.rpm 
+
+#下载rabbitmq-server
+wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.1/rabbitmq-server-3.5.1-1.noarch.rpm 
+
+[root@bogon ~]# sudo docker run -it -p 9090:80  --name only_70 onlyoffice/documentserver:7.0
+ * Starting PostgreSQL 12 database server                                                                                                                                        [ OK ] 
+ * Starting RabbitMQ Messaging Server rabbitmq-server                                                                                                                                   
+ * FAILED - check /var/log/rabbitmq/startup_\{log, _err\}                                                                            [fail]
+ 
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+Waiting for connection to the localhost host on port 5672
+
+386 136
+
+
+[root@0b5eec9ea704 /]# cat /etc/odbcinst.ini 
+[PostgreSQL]
+Description=ODBC for PostgreSQL
+Driver=/usr/lib/psqlodbcw.so
+Setup=/usr/lib/libodbcpsqlS.so
+Driver64=/usr/lib64/psqlodbcw.so
+Setup64=/usr/lib64/libodbcpsqlS.so
+FileUsage=1
+
+[MySQL]
+Description=ODBC for MySQL
+Driver=/usr/lib/libmyodbc5.so
+Setup=/usr/lib/libodbcmyS.so
+Driver64=/usr/lib64/libmyodbc5.so
+Setup64=/usr/lib64/libodbcmyS.so
+FileUsage=1
+
+[SQL Server]
+Description=Microsoft ODBC Driver 17 for SQL Server
+Driver=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.10.so.5.1
+UsageCount=1
+
+[ORACLE]
+Description     = Oracle ODBC driver for Oracle 12c
+Driver          = /usr/local/oracle/instantclient_12_1/libsqora.so.12.1
+
+[root@0b5eec9ea704 /]# cat /etc/odbc.ini 
+[151_sql_server]
+Driver          = SQL Server
+Server          = 192.168.0.151
+Port            = 1433
+Database        = TZX_RWDB_HN_YJYB
+UID             = sa
+PWD             = 3edc9ijn~
+
+
+[oracle_71]
+Driver          = ORACLE
+Server          = 192.168.0.71
+Port            = 1521
+UID             = RWDB_HN
+PWD             = RWDB_HN
+
+
+
+export PATH="$PATH:/opt/mssql-tools/bin"
+export LD_LIBRARY_PATH=/usr/local/oracle/instantclient_12_1:$LD_LIBRARY_PATH
+
+
+
+PATH=PATH:
+
+HOME/bin
+
+export PATH
+
+export ORACLE_BASE=/u01/app/oracle
+
+export ORACLE_HOME=$ORACLE_BASE/product/11.2.0/db_1
+
+export ORACLE_UNQNAME=zyr11g
+
+export ORACLE_SID=db11g
+
+export LD_LIBRARY_PATH=/opt/odbc/instantclient_11_2:/usr/local/lib:$LD_LIBRARY_PATH
+
+export PATH=ORACLEHOME/bin:
+ORACLE_HOME/OPatch:/usr/local/bin:$PATH
+
+
+
+[ORACLE]
+Description     = Oracle ODBC driver for Oracle 12c
+Driver          = /usr/local/oracle/instantclient_12_1/libsqora.so.12.1
+FileUsage       = 1
+
+
+
+[Oracle 12c ODBC driver]
+Description     = Oracle ODBC driver for Oracle 12c
+Driver          = /usr/local/oracle/instantclient_12_1/libsqora.so.12.1
+Setup           =
+FileUsage       =
+CPTimeout       =
+
+
+
+
+netstat -tnlp
+sudo docker run -it -p 9010:80  --name ofsvr ub2204:v1  /bin/bash
+sudo docker run -it -p 9020:80 -p 9022:22   --name ofsvr ub2204:v1  /bin/bash
+
+
+
+192.168.0.193:9010
+
+
+root@eb23d647a216:/home/onlyoffice# apt-get install ./onlyoffice-desktopeditors_amd64.deb 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Note, selecting 'onlyoffice-desktopeditors' instead of './onlyoffice-desktopeditors_amd64.deb'
+onlyoffice-desktopeditors is already the newest version (7.5.1-23).
+0 upgraded, 0 newly installed, 0 to remove and 4 not upgraded.
+
+
+下列【新】软件包将被安装：
+  nodejs
+升级了 0 个软件包，新安装了 1 个软件包， 要卸载 1 个软件包，有 2 个软件包未被升级。
+需要下载 25.4 MB 的归档。
+解压缩后会消耗 112 MB 的额外空间。
+忽略:1 https://deb.nodesource.com/node_14.x jammy/main amd64 nodejs amd64 14.21.3-deb-1nodesource1
+忽略:1 https://deb.nodesource.com/node_14.x jammy/main amd64 nodejs amd64 14.21.3-deb-1nodesource1
+忽略:1 https://deb.nodesource.com/node_14.x jammy/main amd64 nodejs amd64 14.21.3-deb-1nodesource1
+错误:1 https://deb.nodesource.com/node_14.x jammy/main amd64 nodejs amd64 14.21.3-deb-1nodesource1
+  无法连接上 deb.nodesource.com:443 (104.22.4.26)，连接超时 无法连接上 deb.nodesource.com:443 (172.67.10.205)，连接超时 无法连接上 deb.nodesource.com:443 (104.22.5.26)，连接超时
+E: 无法下载 https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.21.3-deb-1nodesource1_amd64.deb  无法连接上 deb.nodesource.com:443 (104.22.4.26)，连接超时 无法连接上 deb.nodesource.com:443 (172.67.10.205)，连接超时 无法连接上 deb.nodesource.com:443 (104.22.5.26)，连接超时
+E: 有几个软件包无法下载，要不运行 apt-get update 或者加上 --fix-missing 的选项再试试？
+Error (sudo): 100
+root@4a93b04cae6e:/home/office/build_tools/tools/linux# ./automate.py server
+
+
+
+dpkg: 处理归档 /var/cache/apt/archives/nodejs_14.21.3-deb-1nodesource1_amd64.deb (--unpack)时出错：
+ 正试图覆盖 /usr/share/systemtap/tapset/node.stp，它同时被包含于软件包 libnode72:amd64 12.22.9~dfsg-1ubuntu3.3
+在处理时有错误发生：
+ /var/cache/apt/archives/nodejs_14.21.3-deb-1nodesource1_amd64.deb
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+Error (sudo): 100
+
+
+nodejs_14.21.3-deb-1nodesource1_amd64.deb
+
+
+
+
+sudo docker import onlyoffice_ub.tar onlyoffice:u2
+
+sudo docker run -it -p 9010:80 -p 9011:22  --name office_svr onlyoffice:u2  /bin/bash
+
+
+service --status-all
+
+service postgresql restart
+service rabbitmq-server restart
+service supervisor restart
+service nginx restart
+
+
+
+[Unit]
+Description=Restart PostgreSQL, RabbitMQ, Supervisor, and Nginx services on boot
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'service postgresql restart && service rabbitmq-server restart && service supervisor restart && service nginx restart'
+
+[Install]
+WantedBy=default.target
+
+
+//------------------------------------------------
+
+root@30aed6d47300:/# service supervisor start
+Starting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver/docservice/out.log does not exist in section 'program:docservice' (file: '/etc/supervisor/conf.d/ds-docservice.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# service supervisor start
+Starting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver/docservice/out.log does not exist in section 'program:docservice' (file: '/etc/supervisor/conf.d/ds-docservice.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# service supervisor restart
+Restarting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver/docservice/out.log does not exist in section 'program:docservice' (file: '/etc/supervisor/conf.d/ds-docservice.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# mkdir -p /var/log/onlyoffice/documentserver/docservice/
+root@30aed6d47300:/# service supervisor restart
+Restarting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver/converter/out.log does not exist in section 'program:converter' (file: '/etc/supervisor/conf.d/ds-converter.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# mkdir -p /var/log/onlyoffice/documentserver/converter/ 
+root@30aed6d47300:/# service supervisor restart
+Restarting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver/metrics/out.log does not exist in section 'program:metrics' (file: '/etc/supervisor/conf.d/ds-metrics.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# mkdir -p /var/log/onlyoffice/documentserver/metrics   
+root@30aed6d47300:/# service supervisor restart
+Restarting supervisor: Error: The directory named as part of the path /var/log/onlyoffice/documentserver-example/out.log does not exist in section 'program:example' (file: '/etc/supervisor/conf.d/ds-example.conf')
+For help, use /usr/bin/supervisord -h
+root@30aed6d47300:/# mkdir -p /var/log/onlyoffice/documentserver-example/
+root@30aed6d47300:/# service supervisor restart
+Restarting supervisor: supervisord.
+root@30aed6d47300:/# service nginx restart
+ * Restarting nginx nginx                                                                                                           [ OK ] 
+root@30aed6d47300:/# 
+
+
+
+/etc/systemd/system/onlyoffice_firing.sh
+
+
+
+service --status-all
+
+service postgresql restart
+service rabbitmq-server restart
+service supervisor restart
+service nginx restart
+
+
+
+
+sudo chmod +x ofsvr_20240321.tar
+sudo docker import ofsvr_20240321.tar onlyoffice_svr:v1
+
+sudo docker run -it  --restart=always -p 9080:80 -p 9081:22 -p 9082:5432 --name ofsvr onlyoffice_svr:v1 /bin/bash
+
+wget http://127.0.0.1:9080
+
+
+sudo docker import mysql_latest.tar mysql:latest
+sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=3edc9ijn~ mysql:latest
+
+
+/usr/local/TzxProject/Dats
+
+
+sudo docker build -t onlyoffice_svr:v2  .
+
+
+
+sudo docker run -itd  --restart=always -p 9080:80 -p 9081:22 -p 9082:5432 --name ofsvr onlyoffice_svr:v2 /bin/bash
+
+
+10.143.1.205
+
+http://10.143.1.205:9080
+
+
+
+sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql -v /usr/local/TzxProject/Dats/mysql/config:/etc/mysql/conf.d  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=3edc9ijn~ mysql:latest
+
+
+
+
+
+
+
+
+
+
+

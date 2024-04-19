@@ -1,0 +1,285 @@
+
+tnsnames.ora
+SID =
+    (DESCRIPTION =
+    (ADDRESS_LIST =
+        (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.71)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+        (SERVER = DEDICATED)
+        (SERVICE_NAME = ORCL)
+        )
+    )
+
+
+export ORACLE_HOME=/usr/lib/oracle/11.2/client64
+export TNS_ADMIN=/usr/lib/oracle/11.2/client64
+export TNS=/usr/lib/oracle/11.2/client64
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+PATH=$PATH:$HOME/bin:$ORACLE_HOME/bin:$ORACLE_HOME/lib
+export ORACLE_SID=ORCL
+
+
+PATH=$PATH:$HOME/bin
+
+export PATH
+export PATH="$PATH:/opt/mssql-tools/bin"
+
+export ORACLE_HOME=/usr/lib/oracle/11.2/client64
+export TNS_ADMIN=/usr/lib/oracle/11.2/client64
+export TNS=/usr/lib/oracle/11.2/client64
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+PATH="$PATH:/opt/mssql-tools/bin:$HOME/bin:$ORACLE_HOME/bin:$ORACLE_HOME/lib"
+
+
+
+
+export ORACLE_HOME=/usr/lib/oracle/11.2/client64 TNS_ADMIN=/usr/lib/oracle/11.2/client64 TNS=/usr/lib/oracle/11.2/client64 NLS_LANG=AMERICAN_AMERICA.AL32UTF8 LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH PATH="$PATH:/opt/mssql-tools/bin:$HOME/bin:$ORACLE_HOME/bin:$ORACLE_HOME/lib"
+
+
+
+
+[Oracle 12c ODBC driver]
+Description     = Oracle ODBC driver for Oracle 12c
+Driver          = /usr/lib/oracle/11.2/client64/lib/libsqora.so.11.1
+Setup           =
+FileUsage       =
+CPTimeout       =
+CPReuse         =
+
+
+[71_oracle]
+Driver          = Oracle 12c ODBC driver
+Server          = 192.168.0.71
+Port            = 1521
+UID             = RWDB_HN
+PWD             = RWDB_HN
+
+
+
+[root@4c40df9155ab client64]# cat tnsnames.ora 
+
+71_ORCL =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST=192.168.0.71)(PORT=1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL)
+    )
+  )
+
+
+
+sqlplus RWDB_HN/RWDB_HN@71_ORCL
+SELECT * FROM TZX.FORERAINPOINT_B WHERE ROWNUM <= 10;
+
+
+
+
+
+isql -v 71_oracle RWDB_HN  RWDB_HN
+isql -v 151_sql_server sa 3edc9ijn~
+
+
+-----------------------------------------------------------
+
+
+
+[ODBC]
+
+Application Attributes = T
+Attributes = W
+BatchAutocommitMode = IfAllSuccessful
+BindAsFLOAT = F
+CloseCursor = F
+DisableDPM = F
+DisableMTS = T
+Driver = Oracle 11g ODBC driver
+DSN = ODBC
+EXECSchemaOpt =
+EXECSyntax = T
+Failover = T
+FailoverDelay = 10
+FailoverRetryCount = 10
+FetchBufferSize = 64000
+ForceWCHAR = F
+Lobs = T
+Longs = T
+MaxLargeData = 0
+MetadataIdDefault = F
+QueryTimeout = T
+ResultSets = T
+ServerName = MOAB
+SQLGetData extensions = F
+Translation DLL =
+Translation Option = 0
+DisableRULEHint = T
+UserID = moab
+Password = moab
+StatementCache=F
+CacheBufferSize=20
+UseOCIDescribeAny=F
+MaxTokenSize=8192
+
+MOAB =
+
+  (DESCRIPTION =
+
+    (ADDRESS_LIST =
+
+      (ADDRESS = (PROTOCOL = TCP)(HOST = adaptive-oracle)(PORT = 1561))
+
+    )
+
+    (CONNECT_DATA =
+
+      (SID = MOAB)
+
+    )
+
+  )
+
+
+
+翻转----------------------------
+
+[151_sql_server]
+Driver          = SQL Server
+Server          = 192.168.0.151
+Port            = 1433
+Database        = TZX_RWDB_HN_YJYB
+UID             = sa
+PWD             = 3edc9ijn~
+
+[71_oracle]
+Driver          = Oracle 12c ODBC driver
+Server          = 192.168.0.71
+Port            = 1521
+UID             = RWDB_HN
+PWD             = RWDB_HN
+
+
+
+[PostgreSQL]
+Description=ODBC for PostgreSQL
+Driver=/usr/lib/psqlodbcw.so
+Setup=/usr/lib/libodbcpsqlS.so
+Driver64=/usr/lib64/psqlodbcw.so
+Setup64=/usr/lib64/libodbcpsqlS.so
+FileUsage=1
+
+[MySQL]
+Description=ODBC for MySQL
+Driver=/usr/lib/libmyodbc5.so
+Setup=/usr/lib/libodbcmyS.so
+Driver64=/usr/lib64/libmyodbc5.so
+Setup64=/usr/lib64/libodbcmyS.so
+FileUsage=1
+
+[SQL Server]
+Description=Microsoft ODBC Driver 17 for SQL Server
+Driver=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.10.so.5.1
+UsageCount=1
+
+
+[Oracle 12c ODBC driver]
+Description     = Oracle ODBC driver for Oracle 12c
+Driver          = /usr/lib/oracle/11.2/client64/lib/libsqora.so.11.1
+Setup           =
+FileUsage       =
+CPTimeout       =
+CPReuse         =
+Driver Logging  = 7
+
+
+
+
+-------------------成功案例-----------------------------------
+
+
+export PATH="$PATH:/opt/mssql-tools/bin"
+export ORACLE_HOME=/usr/lib/oracle/11.2/client64
+export TNS_ADMIN=/usr/lib/oracle/11.2/client64
+export TNS=/usr/lib/oracle/11.2/client64
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+PATH="$PATH:/opt/mssql-tools/bin:$HOME/bin:$ORACLE_HOME/bin:$ORACLE_HOME/lib"
+
+[root@4c40df9155ab /]# 
+[root@4c40df9155ab /]# cat etc/odbcinst.ini
+[PostgreSQL]
+Description=ODBC for PostgreSQL
+Driver=/usr/lib/psqlodbcw.so
+Setup=/usr/lib/libodbcpsqlS.so
+Driver64=/usr/lib64/psqlodbcw.so
+Setup64=/usr/lib64/libodbcpsqlS.so
+FileUsage=1
+
+[MySQL]
+Description=ODBC for MySQL
+Driver=/usr/lib/libmyodbc5.so
+Setup=/usr/lib/libodbcmyS.so
+Driver64=/usr/lib64/libmyodbc5.so
+Setup64=/usr/lib64/libodbcmyS.so
+FileUsage=1
+
+[SQL Server]
+Description=Microsoft ODBC Driver 17 for SQL Server
+Driver=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.10.so.5.1
+UsageCount=1
+
+
+[Oracle 11g ODBC driver]
+Description     = Oracle ODBC driver for Oracle 11g
+Driver          = /usr/lib/oracle/11.2/client64/lib/libsqora.so.11.1
+Setup           =
+FileUsage       =
+CPTimeout       =
+CPReuse         = 
+[root@4c40df9155ab /]# cat etc/odbc.ini
+[151_sql_server]
+Driver          = SQL Server
+Server          = 192.168.0.151
+Port            = 1433
+Database        = TZX_RWDB_HN_YJYB
+UID             = sa
+PWD             = 3edc9ijn~
+
+[71_oracle]
+Driver          = Oracle 11g ODBC driver
+Server          = 192.168.0.71
+Port            = 1521
+ServerName      =  71_ORCL
+UID             = RWDB_HN
+PWD             = RWDB_HN
+
+[root@4c40df9155ab /]# cat /usr/lib/oracle/11.2/client64/tnsnames.ora 
+
+71_ORCL =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST=192.168.0.71)(PORT=1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL):
+    )
+  )
+[root@4c40df9155ab /]# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

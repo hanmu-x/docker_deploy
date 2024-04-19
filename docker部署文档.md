@@ -159,10 +159,10 @@
 
 - 下面以ubuntu系统为例
 
-```shell
-curl -fsSL https://test.docker.com -o test-docker.sh
-sudo sh test-docker.sh
-```
+    ```shell
+    curl -fsSL https://test.docker.com -o test-docker.sh
+    sudo sh test-docker.sh
+    ```
 
 ### 1.2.2 手动安装
 
@@ -170,50 +170,50 @@ sudo sh test-docker.sh
 
 1. 更新软件包列表：使用以下命令更新软件包列表：
 
-```shell
-sudo apt update
-```
+    ```shell
+    sudo apt update
+    ```
 
 2. 安装依赖软件包：安装Docker所需的依赖软件包：
 
-```shell
-    sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common
-```
+    ```shell
+        sudo apt-get install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common
+    ```
 
 3. 添加Docker官方GPG密钥：通过以下命令添加Docker官方的GPG密钥：
 
-```shell
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-```
+    ```shell
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    ```
 
 4. 添加Docker官方APT源：添加Docker官方的APT源到Ubuntu的软件包管理器中：
 
-```shell
-echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
+    ```shell
+    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    ```
 
 5. 更新软件包列表：再次更新软件包列表以获取Docker：
 
-```shell
-sudo apt update
-```
+    ```shell
+    sudo apt update
+    ```
 
 6. 安装Docker引擎：使用以下命令来安装Docker引擎：
 
-```shell
-sudo apt install docker-ce docker-ce-cli containerd.io
-```
+    ```shell
+    sudo apt install docker-ce docker-ce-cli containerd.io
+    ```
 
 7. 启动Docker服务：使用以下命令启动Docker服务：
 
-```shell
-sudo systemctl start docker
-```
+    ```shell
+    sudo systemctl start docker
+    ```
 
 至此，已经完成了在线安装Docker的步骤。
 
@@ -223,9 +223,9 @@ sudo systemctl start docker
 
 1. 检查Docker版本：在终端中运行以下命令来检查Docker版本：
 
-```shell
-docker --version
-```
+    ```shell
+    docker --version
+    ```
 
 如果成功安装，将看到Docker的版本信息。
 
@@ -238,68 +238,68 @@ docker --version
 
 1. 停止Docker服务：使用以下命令停止Docker服务：
 
-```shell
-sudo systemctl stop docker
-```
+    ```shell
+    sudo systemctl stop docker
+    ```
 
 2. 卸载Docker软件包：执行以下命令以卸载Docker软件包：
 
-```shell
-sudo apt-get autoremove docker docker-ce docker-engine  docker.io  containerd runc
-```
+    ```shell
+    sudo apt-get autoremove docker docker-ce docker-engine  docker.io  containerd runc
+    ```
 
 3. 查看docker是否卸载干净
 
-```shell
-dpkg -l | grep docker
-dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P        ## 删除无用的相关的配置文件
-```
+    ```shell
+    dpkg -l | grep docker
+    dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P        ## 删除无用的相关的配置文件
+    ```
 
 4. 删除没有删除的相关插件
 
-```shell
-sudo sapt-get autoremove docker-ce-*
-```
+    ```shell
+    sudo sapt-get autoremove docker-ce-*
+    ```
 
 5. 删除docker的相关配置&目录
 
-```shell
-sudo rm -rf /etc/systemd/system/docker.service.d
+    ```shell
+    sudo rm -rf /etc/systemd/system/docker.service.d
 
-sudo rm -rf /var/lib/docker
-```
+    sudo rm -rf /var/lib/docker
+    ```
 
 6. 确定docker卸载完毕
    
-```shell
-docker --version
-```
+    ```shell
+    docker --version
+    ```
 
 **离线安装的卸载步骤**：
 
 1. 停止Docker服务：执行以下命令停止Docker服务：
 
-```shell
-sudo systemctl stop docker
-```
+    ```shell
+    sudo systemctl stop docker
+    ```
 
 2. 卸载Docker软件包：使用以下命令卸载Docker软件包：
 
-```shell
-sudo dpkg -r docker-ce
-```
+    ```shell
+    sudo dpkg -r docker-ce
+    ```
 
 3. 删除Docker配置和数据：执行以下命令删除Docker的配置文件和数据：
 
-```shell
-sudo rm -rf /var/lib/docker
-```
+    ```shell
+    sudo rm -rf /var/lib/docker
+    ```
 
 4. 删除Docker用户组（如果没有其他使用该组的进程）：使用以下命令删除Docker用户组：
 
-```shell
-sudo groupdel docker
-```
+    ```shell
+    sudo groupdel docker
+    ```
 
 请注意，在卸载Docker之后，容器、镜像和卷将被删除，并且无法恢复。如果希望保留它们，请先备份。此外，如果在安装过程中使用了不同的方法（如使用脚本或其他自定义方式安装的Docker），卸载步骤可能会有所不同。
 
@@ -318,16 +318,16 @@ sudo groupdel docker
 
 
 2. 安装 
-```shell
-sudo cp qemu-aarch64-static /usr/bin/
-sudo chmod +x /usr/bin/qemu-aarch64-static
-```
+    ```shell
+    sudo cp qemu-aarch64-static /usr/bin/
+    sudo chmod +x /usr/bin/qemu-aarch64-static
+    ```
 
 3. 注册QEMU虚拟机 (**每次重启都要重新注册**)
 
-```shell
-sudo docker run --rm --privileged multiarch/qemu-user-static:register
-```
+    ```shell
+    sudo docker run --rm --privileged multiarch/qemu-user-static:register
+    ```
 
 **注:安装完qemu的模拟器就可以使用x86版本的docker来安装arm版本的docker镜像,在x86架构下实例化一个arm版本的ubuntu的docker镜像**
 
@@ -337,57 +337,57 @@ sudo docker run --rm --privileged multiarch/qemu-user-static:register
 
 1. 在线拉取ubuntu Arm镜像
 
-```shell
-sudo docker pull arm64v8/ubuntu:22.04
-```
+    ```shell
+    sudo docker pull arm64v8/ubuntu:22.04
+    ```
 
 **注: 如果是离线的安装ubuntu镜像,请见: 2.2章离线安装ubuntu**
 
 2. 创建Arm容器
 
-```shell
-   sudo docker run  -it \  
-   --name arm_ub\  
-   -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static \  
-   -v /etc/timezone:/etc/timezone:ro \  
-   -v /etc/localtime:/etc/localtime:ro \  
-   arm64v8/ubuntu:22.04 /bin/bash  
-```
+    ```shell
+    sudo docker run  -it \  
+    --name arm_ub\  
+    -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static \  
+    -v /etc/timezone:/etc/timezone:ro \  
+    -v /etc/localtime:/etc/localtime:ro \  
+    arm64v8/ubuntu:22.04 /bin/bash  
+    ```
 
 3. 开启这个容器
 
-```shell
-sudo docker start arm_ub
-```
+    ```shell
+    sudo docker start arm_ub
+    ```
 
 4. 进入容器
 
-```shell
-sudo docker exec -it arm_ub /bin/bash
-```
+    ```shell
+    sudo docker exec -it arm_ub /bin/bash
+    ```
 
 5. 测试容器的架构
 
-```shell
- uname -m
+    ```shell
+    uname -m
 
- ---------返回值为-------------
- aarch64
-```
+    ---------返回值为-------------
+    aarch64
+    ```
 
 
 6. 导出容器
 
-```shell
-sudo docker export arm_ub > arm_ub.tar
-```
+    ```shell
+    sudo docker export arm_ub > arm_ub.tar
+    ```
 
 7. 导入容器
 
 
-```shell
-sudo docker import arm_ub.tar arm_ub_image
-```
+    ```shell
+    sudo docker import arm_ub.tar arm_ub_image
+    ```
 
 **注:这里导入导出容器和 第3章导入导出容器的方式相同**
 
@@ -395,22 +395,22 @@ sudo docker import arm_ub.tar arm_ub_image
 
 注: 这里在x86架构下实例化arm架构的容器和直接实例化x86架构的容器不相容需要保证,除指令不同外还需要保证:启动QEMU虚拟机,方法请见: 1.5.1 安装qemu模拟器中 3.注册QEMU虚拟机
 
-```shell
+    ```shell
 
-sudo docker run -it  --name aaaa -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro  arm_ub_cout  /bin/bash
+    sudo docker run -it  --name aaaa -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro  arm_ub_cout  /bin/bash
 
------------------------如果上面命令有问题运行下面命令---------------------------
+    -----------------------如果上面命令有问题运行下面命令---------------------------
 
-sudo docker run -it  --name aaaa -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static   arm_ub_cout  /bin/bash
-```
+    sudo docker run -it  --name aaaa -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static   arm_ub_cout  /bin/bash
+    ```
 
 9. 启动运行容器
 
-```shell
-sudo docker start aaaa
+    ```shell
+    sudo docker start aaaa
 
-sudo docker exec -it aaaa /bin/bash
-```
+    sudo docker exec -it aaaa /bin/bash
+    ```
 
 
 # 2. docker安装ubuntu
@@ -419,24 +419,24 @@ sudo docker exec -it aaaa /bin/bash
 
 1. 在线拉取ubuntu镜像
 
-```shell
-docker pull ubuntu
-```
+    ```shell
+    docker pull ubuntu
+    ```
 
 注: 
 
 2. 运行容器，并且可以通过 exec 命令进入 ubuntu 容器
 
 
-```shell
-docker run -itd --name ubuntu-test ubuntu /bin/bash
-```
+    ```shell
+    docker run -itd --name ubuntu-test ubuntu /bin/bash
+    ```
 
 3. 启动这个虚拟机
 
-```shell
-sudo docker exec -it ubuntu-test /bin/bash
-```
+    ```shell
+    sudo docker exec -it ubuntu-test /bin/bash
+    ```
 
 
 ## 2.2 离线安装ubuntu(导入导出官方镜像 )
@@ -488,29 +488,29 @@ sudo docker exec -it ubuntu-test /bin/bash
 
 1. 运行容器，并且可以通过 exec 命令进入 ubuntu 容器
 
-```shell
-sudo docker run -itd --name docker_ub ubuntu
+    ```shell
+    sudo docker run -itd --name docker_ub ubuntu
 
----------
-wub@wub:~/Downloads$ sudo docker run -itd --name docker_ub ubuntu
-ba84659d5b8e6c3c3ced4f6caf65ff1f6bc5f981028a426955b08bbe50c87676
+    ---------
+    wub@wub:~/Downloads$ sudo docker run -itd --name docker_ub ubuntu
+    ba84659d5b8e6c3c3ced4f6caf65ff1f6bc5f981028a426955b08bbe50c87676
 
-```
+    ```
 
 1. 启动这个虚拟机
 
-```shell
-sudo docker exec -it docker_ub /bin/bash
+    ```shell
+    sudo docker exec -it docker_ub /bin/bash
 
----------
-wub@wub:~/Downloads$ sudo docker ps -a
-CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
-ba84659d5b8e   ubuntu    "/bin/bash"   2 minutes ago   Up 2 minutes             docker_ub
-wub@wub:~/Downloads$ sudo docker start ba84659d5b8e
-ba84659d5b8e
-wub@wub:~/Downloads$ sudo docker exec -it docker_ub /bin/bash
+    ---------
+    wub@wub:~/Downloads$ sudo docker ps -a
+    CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
+    ba84659d5b8e   ubuntu    "/bin/bash"   2 minutes ago   Up 2 minutes             docker_ub
+    wub@wub:~/Downloads$ sudo docker start ba84659d5b8e
+    ba84659d5b8e
+    wub@wub:~/Downloads$ sudo docker exec -it docker_ub /bin/bash
 
-```
+    ```
 
 
 # 3. 导出导入容器
@@ -520,9 +520,9 @@ wub@wub:~/Downloads$ sudo docker exec -it docker_ub /bin/bash
 在 Docker 中，可以使用导入（import）和导出（export）操作来迁移和共享容器。
 
 - 导出容器：使用 `docker export` 命令将一个正在运行的容器导出为一个可传输的 tar 归档文件。命令格式为 `docker export <容器ID或名称> > <输出文件路径>`。例如：
-```shell
-sudo docker export mycontainer > mycontainer.tar
-```
+    ```shell
+    sudo docker export mycontainer > mycontainer.tar
+    ```
 
 这将将容器 `mycontainer` 导出为 `mycontainer.tar` 归档文件。导出的文件包含容器的文件系统和元数据，但不包含容器状态或相关的镜像信息。
 
@@ -530,9 +530,9 @@ sudo docker export mycontainer > mycontainer.tar
 
 - 导入容器：使用 `docker import` 命令将一个导出的 tar 归档文件导入为一个新的镜像。命令格式为 `docker import <输入文件路径> <新镜像名称>:<标签>`。例如：
 
-```shell
-sudo docker import mycontainer.tar aaa
-```
+    ```shell
+    sudo docker import mycontainer.tar aaa
+    ```
 
 这将导入 `mycontainer.tar` 归档文件为名为 `aaa`的新镜像。
 
@@ -1501,4 +1501,52 @@ sudo docker run -it -p 80:80 -p 10022:22 --name office ub2204:office /bin/bash
 sudo docker import centos7_db_x86.tar  centos7_db:v1
 
 
-// 创建MySQL容器
+# 创建MySQL容器
+
+- 拉取镜像
+
+    ```shell
+    ```
+
+    ```shell
+        docker pull mysql	    #下载最新版Mysql镜像 (其实此命令就等同于 : docker pull mysql:latest )
+        docker pull mysql:xxx	#下载指定版本的Mysql镜像 (xxx指具体版本号)
+    ```
+
+-  创建容器指令
+
+    ```shell
+        sudo docker run \
+        -it \
+        --name mysql \
+        -p 3306:3306 \
+        --restart=always \
+        -v /mydata/mysql/data:/var/lib/mysql \
+        -v /mydata/mysql/log:/var/log/mysql \
+        -v /mydata/mysql/conf:/etc/mysql \
+        -e MYSQL_ROOT_PASSWORD=123456 \
+        -e TZ=Asia/Shanghai \
+        mysql:5.7
+    ```
+
+    ```shell
+        sudo docker run -itd --name mysql_test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
+
+        sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
+
+        sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
