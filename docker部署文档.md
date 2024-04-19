@@ -1470,6 +1470,44 @@ sudo docker run -it -p 10020:9090 -p 10021:9091 -v /home/wkl/test2:/home/test_sh
 ```
 
 
+# 创建MySQL容器
+
+- 拉取镜像
+
+```shell
+```
+
+```bash
+    docker pull mysql	    #下载最新版Mysql镜像 (其实此命令就等同于 : docker pull mysql:latest )
+    docker pull mysql:xxx	#下载指定版本的Mysql镜像 (xxx指具体版本号)
+```
+
+-  创建容器指令
+
+```shell
+sudo docker run \
+-it \
+--name mysql \
+-p 3306:3306 \
+--restart=always \
+-v /mydata/mysql/data:/var/lib/mysql \
+-v /mydata/mysql/log:/var/log/mysql \
+-v /mydata/mysql/conf:/etc/mysql \
+-e MYSQL_ROOT_PASSWORD=123456 \
+-e TZ=Asia/Shanghai \
+mysql:5.7
+```
+
+```shell
+sudo docker run -itd --name mysql_test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
+
+sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
+
+sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
+```
+
+
+
 
 
 
@@ -1501,41 +1539,6 @@ sudo docker run -it -p 80:80 -p 10022:22 --name office ub2204:office /bin/bash
 sudo docker import centos7_db_x86.tar  centos7_db:v1
 
 
-# 创建MySQL容器
-
-- 拉取镜像
-
-    ```shell
-    ```
-
-    ```shell
-        docker pull mysql	    #下载最新版Mysql镜像 (其实此命令就等同于 : docker pull mysql:latest )
-        docker pull mysql:xxx	#下载指定版本的Mysql镜像 (xxx指具体版本号)
-    ```
-
--  创建容器指令
-
-    ```shell
-        sudo docker run \
-        -it \
-        --name mysql \
-        -p 3306:3306 \
-        --restart=always \
-        -v /mydata/mysql/data:/var/lib/mysql \
-        -v /mydata/mysql/log:/var/log/mysql \
-        -v /mydata/mysql/conf:/etc/mysql \
-        -e MYSQL_ROOT_PASSWORD=123456 \
-        -e TZ=Asia/Shanghai \
-        mysql:5.7
-    ```
-
-    ```shell
-        sudo docker run -itd --name mysql_test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
-
-        sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
-
-        sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
-    ```
 
 
 
