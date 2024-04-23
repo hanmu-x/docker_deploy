@@ -603,6 +603,8 @@ e87db5c5413c   aaa       "/bin/bash"   31 seconds ago   Exited (130) 3 seconds a
  sudo docker run -it -p 8081:5000 --name link_ub   ub_sql /bin/bash
 # 多个端口
  sudo docker run -it -p 10020:9090 -p 10021:9091  --name ublink  ubuntu:22.04  /bin/bash
+# 连续端口映射
+ sudo docker run -d -p 8000-8010:8000-8010 --name ublink  ubuntu:22.04  /bin/bash # 容器内部的8000到8010端口将依次映射到宿主机的相同范围的端口上
  --------------
  wub@wub:~/Downloads$ sudo docker run -it -p 0.0.0.0:8081:5000 --name link_ub   ub_sql /bin/bash
   root@e352b1e281f3:/# exit
@@ -1507,36 +1509,22 @@ sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/
 ```
 
 
+# 部署挂载指令
 
+## svr类型容器部署
 
+```shell
+sudo docker run -itd --name ~~~_svr -p 8000-8010:8000-8010 -v /usr/local/(TzxProjet/tzx_pro)/~~ :/tzx/PROJ_ROOT ubuntu:22.04 /bin/bash
 
+```
 
 -----
-
-ubuntu部署vcpkg
-sudo apt-get install build-essential tar curl zip unzip
-git clone  http://192.168.0.60/develop/vcpkg.git
-cd vcpkg
-chmod 777 bootstrap-vcpkg.sh
-./bootstrap-vcpkg.sh
 
 查看系统架构的指令
 uname -m
 查看系统版本
 cat /etc/centos-release
 
- http://download.onlyoffice.com/docspace/docspace-install.sh
-
-
-
-sudo docker run -it -p 80:80 -p 10022:22 --name office ub2204:v1 /bin/bash
-sudo docker run -it -p 80:80 -p 10022:22 --name office ub2204:office /bin/bash
-
-
-
-// 临时添加待删 部署
-
-sudo docker import centos7_db_x86.tar  centos7_db:v1
 
 
 
