@@ -1180,7 +1180,6 @@ config.v2.json文件地址:` /var/lib/docker/containers/"container-ID"/config.v2
         "/home/ub_doc_2": {
             "Source": "/home/wkl/test2",
             "Destination": "/home/ub_doc_2",
-            
             "Name": "",
             "Driver": "",
             "Type": "bind",
@@ -1195,7 +1194,27 @@ config.v2.json文件地址:` /var/lib/docker/containers/"container-ID"/config.v2
     },
 ```
 
-4. 修改完之后重启docker
+映射文件
+
+```json
+"/etc/odbc.ini": {
+    "Source": "/usr/local/TzxProject/Conf/odbc.ini",
+    "Destination": "/etc/odbc.ini",
+    "RW": true,
+    "Name": "",
+    "Driver": "",
+    "Type": "bind",
+    "Propagation": "rprivate",
+    "Spec": {
+        "Type": "bind",
+        "Source": "/usr/local/TzxProject/Conf/odbc.ini",
+        "Target": "/etc/odbc.ini"
+    },
+    "SkipMountpointCreation": false
+},
+```
+
+1. 修改完之后重启docker
 
 ```shell
 sudo systemctl restart docker
@@ -1506,6 +1525,29 @@ sudo docker run -itd --name mysql_test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=12345
 sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:5.7
 
 sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
+
+# mysql8.3.0
+sudo mkdir /home/wub/mysql_83/conf/conf.d
+sudo docker run -itd --name mysql_83 -p 13309:3306  --restart=always -v /home/wub/mysql_83/data:/var/lib/mysql -v /home/wub/mysql_83/log:/var/log/mysql -v /home/wub/mysql_83/conf:/etc/mysql/ -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:8.3.0
+
+```
+
+
+### 修改用户密码
+
+- 修改root用户密码
+  进入mysql后执行下面sql语句
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
+```
+
+### 新加用户
+
+```sql
+CREATE USER 'new_user'@'%' IDENTIFIED BY 'new_pass';  -- 创建新用户 new_user 及密码 new_pass
+GRANT ALL ON 库名.* TO `wub`@`%`; -- 为 new_user 用户设置 new_db 库的权限
+flush privileges; -- 刷新用户权限
+exit; -- 退出
 ```
 
 
