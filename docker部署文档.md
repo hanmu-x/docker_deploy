@@ -1242,11 +1242,16 @@ docker run -d --restart=always --name 设置容器名 使用的镜像
 ### 3.7.2 创建后修改
 
 ```shell
+# 设置开机自启动
 [root@localhost ~]# sudo docker ps -a
 CONTAINER ID   IMAGE             COMMAND       CREATED      STATUS                       PORTS     NAMES
 02d043707227   ubuntu:22.04      "/bin/bash"   6 days ago   Exited (137) 6 days ago                ub2204_v2
 [root@localhost ~]# sudo docker update --restart=always  ub2204_v2
 ub2204_v2
+
+取消开机自启动
+# docker update --restart=no 容器名或容器ID
+docker update --restart=no <CONTAINER ID>
 
 
 --------重启后----------
