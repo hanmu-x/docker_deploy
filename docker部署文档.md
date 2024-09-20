@@ -1532,8 +1532,8 @@ sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/
 sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
 
 # mysql8.3.0
-sudo mkdir /home/wub/mysql_83/conf/conf.d
-sudo docker run -itd --name mysql_83 -p 13309:3306  --restart=always -v /home/wub/mysql_83/data:/var/lib/mysql -v /home/wub/mysql_83/log:/var/log/mysql -v /home/wub/mysql_83/conf:/etc/mysql/ -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:8.3.0
+sudo mkdir /home//mysql_83/conf/conf.d
+sudo docker run -itd --name mysql_83 -p 13309:3306  --restart=always -v /home/l/mysql_83/data:/var/lib/mysql -v /home/l/mysql_83/log:/var/log/mysql -v /home/l/mysql_83/conf:/etc/mysql/ -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:8.3.0
 
 ```
 
