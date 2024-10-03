@@ -1223,7 +1223,6 @@ sudo systemctl restart docker
 
 ## 3.7 docker容器设置开机自启动
 
-
 ### 3.7.1 创建是设置
 
 ```shell
@@ -1572,6 +1571,360 @@ sudo docker run -itd --name ~~~_svr -p 8000-8010:8000-8010 -v /usr/local/(TzxPro
 uname -m
 查看系统版本
 cat /etc/centos-release
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+# 达梦数据库(dm8) 
+
+
+可以直接从达梦数据库官网下载 dm8的容器包
+
+下载地址:https://eco.dameng.com/download/
+
+
+## 创建指令
+
+参数名 	参数描述
+-d 	-detach 的简写，在后台运行容器，并且打印容器 id。
+-p 	指定容器端口映射，比如 -p 30236:5236 是将容器里数据库的 5236 端口映射到宿主机 30236 端口，外部就可以通过宿主机 ip 和 30236 端口访问容器里的数据库服务。
+--restart 	指定容器的重启策略，默认为 always，表示在容器退出时总是重启容器。
+--name 	指定容器的名称。
+--privileged 	指定容器是否在特权模式下运行。
+-v 	指定在容器创建的时候将宿主机目录挂载到容器内目录，默认为/home/mnt/disks
+
+使用 -e 命令指定数据库初始化参数时，需要注意的是目前只支持预设以下九个 DM 参数。
+参数名 	参数描述 	备注
+PAGE_SIZE 	页大小，可选值 4/8/16/32，默认值：8 	设置后不可修改
+EXTENT_SIZE 	簇大小，可选值 16/32/64，默认值：16 	设置后不可修改
+CASE_SENSITIVE 	1:大小写敏感；0：大小写不敏感，默认值：1 	设置后不可修改
+UNICODE_FLAG 	字符集选项；0:GB18030;1:UTF-8;2:EUC-KR，默认值：0 	设置后不可修改
+INSTANCE_NAME 	初始化数据库实例名字，默认值：DAMENG 	可修改
+SYSDBA_PWD 	初始化实例时设置 SYSDBA 的密码，默认值：SYSDBA001 	可修改
+BLANK_PAD_MODE 	空格填充模式，默认值：0 	设置后不可修改
+LOG_SIZE 	日志文件大小，单位为：M，默认值：256 	可修改
+BUFFER 	系统缓存大小，单位为：M，默认值：1000 	可修改
+
+
+服务器端部署
+
+```bash
+sudo docker run -itd -p 13308:5236 --restart=always  --name=dm8_test --privileged=true -e SYSDBA_PWD=123456789  -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1  -v /usr/local/TzxProject/Dats/dm8:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
+```
+
+
+测试
+
+```bash
+sudo docker run -itd -p 13308:5236  --name=dm8_test --privileged=true -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1 -v /usr/local/TzxProject/Dats/dm8:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
+```
+
+```bash
+sudo docker run -itd -p 13309:5236  --name=dm8_test_2 --privileged=true -e SYSDBA_PWD=123456789 -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1 -v /usr/local/TzxProject/Dats/dm8_2:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
+
+```
+
+
+156 部署
+
+```bash
+sudo docker run -itd -p 15236:5236  --name=dm8_svr --privileged=true -e SYSDBA_PWD=3edc9ijn~ -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1 -v /usr/local/TzxProject/Dats/dm8_svr_data:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
+
+
+./disql SYSDBA/3edc9ijn~
+
+telnet 192.168.0.156 15236
+telnet 192.168.0.156 22
+
+```
+
+
+
+检验测试
+
+默认用户名密码为 SYSDBA/SYSDBA001
+
+```bash
+./disql SYSDBA/SYSDBA001
+
+
+查询表空间
+SELECT tablespace_name, status, extent_management FROM dba_tablespaces;
+
+
+root@b828c5dbb125:/# disql SYSDBA/SYSDBA001
+
+Server[LOCALHOST:5236]:mode is normal, state is open
+login used time : 2.967(ms)
+disql V8
+SQL> SELECT tablespace_name, status, extent_management FROM dba_tablespaces;
+
+LINEID     TABLESPACE_NAME STATUS      EXTENT_MANAGEMENT
+---------- --------------- ----------- -----------------
+1          SYSTEM          0           NULL
+2          ROLL            0           NULL
+3          TEMP            0           NULL
+4          MAIN            0           NULL
+5          MAIN            NULL        NULL
+
+used time: 8.249(ms). Execute id is 65101.
+
+
+```
+
+
+添加环境变量
+
+```bash
+输入命令 vim /etc/profile 
+在文件末尾添加以下行：
+   export PATH=$PATH:/opt/dmdbms/bin
+```
+
+
+### 达梦数据库 添加用户和密码
+
+1. 创建表空间
+
+```
+create tablespace "TEST" datafile '/opt/dmdbms/data/DAMENG/TEST.DBF' size 128 ;
+create tablespace "TZX" datafile '/opt/dmdbms/data/DAMENG/TZX.DBF'  size 128 ;
+```
+
+2.创建用户：使用以下 SQL 命令来创建新用户：
+
+   CREATE USER your_username IDENTIFIED BY your_password;
+   CREATE USER <用户名> IDENTIFIED BY <口令> DEFAULT TABLESPACE <表空间名>
+   CREATE USER GIN IDENTIFIED BY 123456789 DEFAULT TABLESPACE MAIN;
+   CREATE USER tzx IDENTIFIED BY 123456789 DEFAULT TABLESPACE TZX;
+   
+    CREATE USER "user" IDENTIFIED BY "pwd" DEFAULT TABLESPACE "ts_data" DEFAULT INDEX TABLESPACE "ts_idx";
+    GRANT create table,select table,update table,insert table TO "user";
+    GRANT resource，public TO "user";
+    GRANT dba TO "user";
+
+
+
+替换 your_username 和 your_password 为你想要的用户名和密码。
+
+3.赋予权限：创建用户后，通常需要赋予一些权限。例如，可以赋予基本的连接和操作权限：
+
+   GRANT CONNECT, RESOURCE TO tzx;
+
+
+4.确认用户创建：可以通过以下查询来确认用户是否创建成功：
+
+   SELECT * FROM user_users WHERE username = 'YOUR_USERNAME';
+
+替换 YOUR_USERNAME 为你刚才创建的用户名。
+这样，你就可以成功添加达梦数据库的用户和密码了。如果需要更多权限，可以根据需求继续使用 GRANT 语句。
+
+
+修改用户密码
+disql SYSDBA/SYSDBA001
+alter user SYSDBA identified by 123456789;
+disql SYSDBA/123456789
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+IA_A_NOWFHTB 库
+
+ALTER TABLE "TZX_FloodDisaster_XJ_FWQ"."IA_A_NOWFHTB" MODIFY "STATUS" VARCHAR(20) NULL;
+
+
+ST_STBPRP_B 库
+
+ALTER TABLE "TZX_FloodDisaster_XJ_FWQ"."ST_STBPRP_B" MODIFY "LOCALITY" VARCHAR(40) NULL;
+ALTER TABLE "TZX_FloodDisaster_XJ_FWQ"."ST_STBPRP_B" MODIFY "ADMAUTH" VARCHAR(30) NULL;
+ALTER TABLE "TZX_FloodDisaster_XJ_FWQ"."ST_STBPRP_B" MODIFY "STLC" VARCHAR(70) NULL;
+ALTER TABLE "TZX_FloodDisaster_XJ_FWQ"."ST_STBPRP_B" MODIFY "RVNM" VARCHAR(60) NULL;
+
+
+
+SELECT AID, ADCD, ADNM, LGTD, LTTD, PTCOUNT, LDAREA, "LEFT", "TOP", "RIGHT", BOTTOM, VERTEX
+FROM "TZX_FloodDisaster_XJ_FWQ"."AD_CD_B";
+
+SELECT count(*) FROM "TZX_FloodDisaster_XJ_FWQ"."ST_STBPRP_B" ;
+
+DELETE FROM "TZX_FloodDisaster_XJ_FWQ"."AD_Plan_Data_Poly";
+DROP FROM "TZX_FloodDisaster_XJ_FWQ"."AD_Plan_Data_Poly";
+DROP TABLE "TZX_FloodDisaster_XJ_FWQ"."Dzwl_MessageSend_R";
+
+
+## 导出,导入数据库
+
+#### 全部库导出,导出
+
+- 导出
+dexp SYSDBA/SYSDBA001\@0.0.0.0:5236 GRANTS=Y FILE=TZX_FloodDisaster_XJ_FWQ_backup.dmp DIRECTORY=/opt/dmdbms/data/ FULL=Y
+dexp SYSDBA/SYSDBA001\@0.0.0.0:5236 GRANTS=Y FILE=XJ_XJ_FWQ_backup.dmp DIRECTORY=/opt/dmdbms/data/ FULL=Y
+
+- 导入
+dimp SYSDBA/123456789@0.0.0.0:5236 GRANTS=Y FILE=TZX_FloodDisaster_XJ_FWQ_backup.dmp DIRECTORY=/opt/dmdbms/data/ FULL=Y
+dimp SYSDBA/123456789@0.0.0.0:5236 GRANTS=Y FILE=XJ_XJ_FWQ_backup.dmp DIRECTORY=/opt/dmdbms/data/ FULL=Y
+
+
+
+
+#### 表级导出
+
+- 导出
+
+dexp  SYSDBA/SYSDBA001\@0.0.0.0:5236 GRANTS=Y  DIRECTORY=/opt/dmdbms/data/  FILE=AD_Plan_Data_Line.dmp tables=TZX_FloodDisaster_XJ_FWQ.AD_Plan_Data_Line
+
+
+dexp SYSDBA/SYSDBA001@0.0.0.0:5236  GRANTS=Y DIRECTORY=/opt/dmdbms/data/ FILE=AD_Plan_Data_Line.dmp tables="AD_Plan_Data_Line"
+
+
+- 导入
+
+
+
+## 导入数据 指令
+
+
+[root@ncc-61-19 bin]# ./dexp help
+dexp V7.6.1.52-Build(2020.03.17-119193)ENT
+格式: ./dexp  KEYWORD=value 或 KEYWORD=(value1,value2,...,valueN)
+ 
+例程: ./dexp  SYSDBA/SYSDBA GRANTS=Y TABLES=(SYSDBA.TAB1,SYSDBA.TAB2,SYSDBA.TAB3)
+ 
+USERID 必须是命令行中的第一个参数
+ 
+关键字              说明（默认值）
+--------------------------------------------------------------------------------
+USERID              用户名/口令 格式:USER/PWD*MPP_TYPE@SERVER:PORT#SSLPATH@SSLPWD
+FILE                导出文件 (dexp.dmp)
+DIRECTORY           导出文件所在目录
+FULL                整库导出 (N)
+OWNER               以用户方式导出 格式 (user1,user2,...)
+SCHEMAS             以模式方式导出 格式 (schema1,schema2,...)
+TABLES              以表方式导出 格式 (table1,table2,...)
+FUZZY_MATCH         TABLES选项是否支持模糊匹配 (N)
+QUERY               用于导出表的子集的select 子句
+PARALLEL            用于指定导出的过程中所使用的线程数目
+TABLE_PARALLEL      用于指定导出的过程中表内的并发线程数目,MPP模式下会转换成单线程
+TABLE_POOL          用于指定表的缓冲区个数
+EXCLUDE             忽略指定的对象
+                       格式 EXCLUDE=(CONSTRAINTS,INDEXES,ROWS,TRIGGERS,GRANTS) or
+                            EXCLUDE=TABLES:table1,table2 or
+                            EXCLUDE=SCHEMAS:sch1,sch2
+INCLUDE             包含指定的对象
+                       格式 INCLUDE=(CONSTRAINTS,INDEXES,ROWS,TRIGGERS,GRANTS) or
+                            INCLUDE=TABLES:table1,table2
+CONSTRAINTS         导出约束 (Y)
+TABLESPACE          导出对象带有表空间 (N)
+GRANTS              导出权限 (Y)
+INDEXES             导出索引 (Y)
+TRIGGERS            导出触发器 (Y)
+ROWS                导出数据行 (Y)
+LOG                 屏幕输出的日志文件
+NOLOGFILE           不使用日志文件(N)
+NOLOG               屏幕上不显示日志信息(N)
+LOG_WRITE           日志信息实时写入文件: 是(Y),否(N)
+DUMMY               交互信息处理: 打印(P), 所有交互都按YES处理(Y),NO(N)
+PARFILE             参数文件名
+FEEDBACK            每 x 行显示进度 (0)
+COMPRESS            导出数据是否压缩 (N)
+ENCRYPT             导出数据是否加密 (N)
+ENCRYPT_PASSWORD    导出数据的加密密钥
+ENCRYPT_NAME        加密算法的名称
+FILESIZE            每个转储文件的最大大小
+FILENUM             一个模板可以生成的文件数
+DROP                导出后删除原表，但不级联删除 (N)
+DESCRIBE            导出数据文件的描述信息，记录在数据文件中
+LOCAL               MPP模式下登录使用MPP_LOCAL方式(N)
+HELP                打印帮助信息
+
+
+[root@ncc-61-19 bin]# ./dimp help
+dimp V7.6.1.52-Build(2020.03.17-119193)ENT
+格式: ./dimp KEYWORD=value 或 KEYWORD=(value1,value2,...,vlaueN)
+ 
+例程: ./dimp SYSDBA/SYSDBA IGNORE=Y ROWS=Y FULL=Y
+ 
+USERID 必须是命令行中的第一个参数
+ 
+关键字                 说明（默认值）
+--------------------------------------------------------------------------------
+USERID                 用户名/口令 格式:USER/PWD*MPP_TYPE@SERVER:PORT#SSLPATH@SSLPWD
+FILE                   导入文件名称 (dexp.dmp)
+DIRECTORY              导入文件所在目录
+FULL                   整库导入 (N)
+OWNER                  以用户方式导入 格式 (user1,user2,...)
+SCHEMAS                以模式方式导入 格式 (schema1,schema2,...)
+TABLES                 以表名方式导入 格式(table1,table2,...)
+PARALLEL               用于指定导入的过程中所使用的线程数目
+TABLE_PARALLEL         用于指定导入的过程中每个表所使用的子线程数目,在FAST_LOAD为Y时有效
+IGNORE                 忽略创建错误 (N)
+TABLE_EXISTS_ACTION    需要的导入表在目标库中存在时采取的操作[SKIP | APPEND | TRUNCATE | REPLACE]
+FAST_LOAD              是否使用dmfldr来导数据(N)
+FLDR_ORDER             使用dmfldr是否需要严格按顺序来导数据(Y)
+COMMIT_ROWS            批量提交的行数(5000)
+EXCLUDE                忽略指定的对象 格式
+                           格式 EXCLUDE=(CONSTRAINTS,INDEXES,ROWS,TRIGGERS,GRANTS)
+GRANTS                 导入权限 (Y)
+CONSTRAINTS            导入约束 (Y)
+INDEXES                导入索引 (Y)
+TRIGGERS               导入触发器 (Y)
+ROWS                   导入数据行 (Y)
+LOG                    指定日志文件
+NOLOGFILE              不使用日志文件(N)
+NOLOG                  屏幕上不显示日志信息(N)
+LOG_WRITE              日志信息实时写入文件(N): 是(Y),否(N)
+DUMMY                  交互信息处理(P): 打印(P), 所有交互都按YES处理(Y),NO(N)
+PARFILE                参数文件名
+FEEDBACK               每 x 行显示进度 (0)
+COMPILE                编译过程, 程序包和函数... (Y)
+INDEXFILE              将表的索引/约束信息写入指定的文件
+INDEXFIRST             导入时先建索引(N)
+REMAP_SCHEMA           格式(SOURCE_SCHEMA:TARGET_SCHEMA)
+                       将SOURCE_SCHEMA中的数据导入到TARGET_SCHEMA中
+ENCRYPT_PASSWORD       数据的加密密钥
+ENCRYPT_NAME           加密算法的名称
+SHOW/DESCRIBE          打印出指定文件的信息(N)
+LOCAL                  MPP模式下登录使用MPP_LOCAL方式(N)
+TASK_THREAD_NUMBER     用于设置dmfldr处理用户数据的线程数目
+BUFFER_NODE_SIZE       用于设置dmfldr读入文件缓冲区大小
+TASK_SEND_NODE_NUMBER  用于设置dmfldr发送节点个数[16,65535]
+LOB_NOT_FAST_LOAD      如果一个表含有大字段，那么不使用dmfldr，因为dmfldr是一行一行提交的
+PRIMARY_CONFLICT       主键冲突的处理方式[IGNORE|OVERWRITE],默认报错
+TABLE_FIRST            是否先导入表(N):是(Y),否(N)
+HELP                   打印帮助信息
+
+
+
+
+
+
+
+
+- 要查看 DM8 数据库中的所有表，可以使用以下 SQL 查询：
+SELECT TABLE_NAME FROM USER_TABLES;
+
+
+
+- 查询检查表的所有者（即当前用户）：
+SELECT USER FROM DUAL;
+
+
+
+- 检查权限
+如果您认为表可能不属于您，您可以运行以下查询查看您当前用户的所有权限：
+
+SELECT * FROM USER_TAB_PRIVS;
+
+SELECT * FROM USER_TABLES;
+
+
+
+
+
+
+
+
+
+
 
 
 
