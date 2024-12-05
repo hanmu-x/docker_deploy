@@ -1573,7 +1573,237 @@ uname -m
 cat /etc/centos-release
 
 
+# sql server 容器部署
+
+## 1. 创建容器
+
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+docker pull mcr.microsoft.com/mssql/server:2012-latest
+
+```bash
+-e "ACCEPT_EULA=Y" 	将 ACCEPT_EULA 变量设置为任意值，以确认接受最终用户许可协议。 SQL Server 映像的必需设置。
+-e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" 	指定至少包含 8 个字符且符合密码策略的强密码。 SQL Server 映像的必需设置。
+-e "MSSQL_COLLATION=<SQL_Server_collation>" 	指定自定义 SQL Server 排序规则，而不使用默认值 SQL_Latin1_General_CP1_CI_AS。
+-p 1433:1433 	将主机环境中的 TCP 端口（第一个值）映射到容器中的 TCP 端口（第二个值）。 在此示例中，SQL Server 侦听容器中的 TCP 1433，此容器端口随后会对主机上的 TCP 端口 1433 公开。
+--name sql1 	为容器指定一个自定义名称，而不是使用随机生成的名称。 如果运行多个容器，则无法重复使用相同的名称。
+--hostname sql1 	用于显式设置容器主机名。 如果未指定主机名，则主机名默认为容器 ID，这是随机生成的系统 GUID。
+-d 	在后台运行容器（守护程序）。
+mcr.microsoft.com/mssql/server:2022-latest
+
+```
+
+```bash
+sudo docker run -itd --name sqlserver_1 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=test123456~" -p 11433:1433  mcr.microsoft.com/mssql/server:2019-latest
+
+sudo docker run -itd --name sqlserver_1 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=test123456~" -p 11433:1433 -v /usr/local/TzxProject/Dats/sqlserver_2019_1:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2019-latest
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ----------------------------------------------------------------------------------------------------------------------------
+
+
+# oracle 容器
+
+1. 下载镜像
+
+```shell
+# 下载镜像
+docker pull registry.cn-hangzhou.aliyuncs.com/zhuyijun/oracle:19c
+
+l@t490s:~$ sudo docker images
+REPOSITORY                                          TAG                                 IMAGE ID       CREATED         SIZE
+registry.cn-hangzhou.aliyuncs.com/zhuyijun/oracle   19c                                 7b5eb4597688   4 years ago     6.61GB
+
+```
+
+2. 创建容器
+```
+sudo docker run -itd  \
+-p 11521:1521  \
+-e ORACLE_SID=ORCLCDB \
+-e ORACLE_PDB=ORCLPDB1 \
+-e ORACLE_PWD=123456 \
+-e ORACLE_EDITION=standard \
+-e ORACLE_CHARACTERSET=AL32UTF8 \
+--name oracle_test \
+registry.cn-hangzhou.aliyuncs.com/zhuyijun/oracle:19c
+
+
+sudo docker run -itd  \
+-p 11522:1521  \
+-e ORACLE_SID=helowin \
+-e ORACLE_PDB=ORCLPDB1 \
+-e ORACLE_PWD=123456 \
+-e ORACLE_EDITION=standard \
+-e ORACLE_CHARACTERSET=AL32UTF8 \
+--name oracle_11 \
+registry.cn-hangzhou.aliyuncs.com/helowin/oracle_11g:latest
+```
+
+sudo docker restart oracle_test
+
+// 19c
+[oracle@7df79352801e ~]$ echo $ORACLE_BASE                                                                   
+/opt/oracle
+[oracle@7df79352801e ~]$ cd /opt/oracle/admin/ORCLCDB/pfile/ 
+cp /opt/oracle/admin/ORCLCDB/pfile/init.ora /opt/oracle/product/19c/dbhome_1/dbs/initORCLCDB.ora
+
+navicate 连接
+
+服务名:ORCLCDB
+用户名:system
+密码:123456
+
+// 11g
+[oracle@7e0f40606b15 /]$ cd /home/oracle/app/oracle/admin/helowin/pfile
+[oracle@7e0f40606b15 pfile]$ cp init.ora.72320146402  /home/oracle/app/oracle/product/11.2.0/dbhome_2/dbs/initORCLCDB.ora
+
+服务名:helowin
+用户名:system
+密码:system
+
+
+
+
+
+[oracle@f602e8cec3bb ~]$ echo $ORACLE_HOME
+/opt/oracle/product/19c/dbhome_1
+[oracle@f602e8cec3bb ~]$ echo $ORACLE_SID
+ORCLCDB
+[oracle@7df79352801e ~]$ echo $ORACLE_BASE
+/opt/oracle
+[oracle@7df79352801e ~]$ 
+[oracle@7df79352801e ~]$ cd /opt/oracle/        
+[oracle@7df79352801e oracle]$ ls
+admin        checkDBStatus.sh  dbca.rsp       fast_recovery_area  product                runUserScripts.sh  startDB.sh
+audit        checkpoints       dbca.rsp.tmpl  oraInventory        relinkOracleBinary.sh  scripts
+cfgtoollogs  createDB.sh       diag           oradata             runOracle.sh           setPassword.sh
+
+
+CREATE USER C##TZX_TEST IDENTIFIED BY 123456;
+GRANT UNLIMITED TABLESPACE TO C##TZX_TEST;
+
+CREATE USER TZX_TEST IDENTIFIED BY 123456;
+GRANT UNLIMITED TABLESPACE TO TZX_TEST;
+oracle_11g
+
+使用 SYS 或 SYSTEM 用户登录
+sqlplus / as sysdba
+连接到数据库：
+SQL> connect / as sysdba
+授予 CREATE SESSION 权限：
+SQL> grant create session to TZX_TEST;
+
+
+
+db_name='TZX_TEST'
+memory_target=500M
+processes=150
+audit_file_dest='$ORACLE_BASE/admin/TZX_TEST/adump'
+audit_trail='db'
+compatible='19.3.0' 
+control_files=('$ORACLE_BASE/oradata/TZX_TEST/control01.ctl','$ORACLE_BASE/fast_recovery_area/TZX_TEST/control02.ctl')
+db_block_size=8192
+db_domain=''
+db_recovery_file_dest='$ORACLE_BASE/fast_recovery_area'
+db_recovery_file_dest_size=4G
+diagnostic_dest='$ORACLE_BASE'
+open_cursors=300
+undo_tablespace='UNDOTBS1'
+
+
+startup nomount pfile='$ORACLE_HOME/dbs/initTZX_TEST.ora';
+
+
+mkdir -p $ORACLE_BASE/admin/TZX_TEST/adump
+
+SQL> startup;
+ORA-01081: cannot start already-running ORACLE - shut it down first
+SQL> SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down. " - rest of line ignored.
+SQL> startup;
+ORACLE instance started.
+
+Total System Global Area 1603411968 bytes
+Fixed Size		    2213776 bytes
+Variable Size		  452986992 bytes
+Database Buffers	 1140850688 bytes
+Redo Buffers		    7360512 bytes
+Database mounted.
+Database opened.
+
+
+
+
+
+
+
+```
+test =
+(DESCRIPTION =
+    (ADDRESS_LIST =
+        (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.237)(PORT = 11521))
+    )
+    (CONNECT_DATA =
+        (SERVICE_NAME = ORCLCDB)
+    )
+)
+
+```
+
+
+如何创建一个名为TZX_TEST 的数据库
+
+sqlplus / as sysdba
+
+CREATE DATABASE TZX_TEST \
+   USER SYS IDENTIFIED BY 123456 \
+   USER SYSTEM IDENTIFIED BY 123456 \
+   LOGFILE GROUP 1 ('/opt/oracle/oradata/TZX_TEST/redo01.log') SIZE 50M, \
+           GROUP 2 ('/opt/oracle/oradata/TZX_TEST/redo02.log') SIZE 50M, \
+           GROUP 3 ('/opt/oracle/oradata/TZX_TEST/redo03.log') SIZE 50M \
+   DATAFILE '/opt/oracle/oradata/TZX_TEST/system01.dbf' SIZE 500M \
+   EXTENT MANAGEMENT LOCAL \
+   UNDO TABLESPACE undotbs1 \
+   DEFAULT TEMPORARY TABLESPACE temp \
+   CHARACTER SET AL32UTF8 \
+   NATIONAL CHARACTER SET AL16UTF16;
+
+
+
+1. 进入容器
+2. 启动容器
+3. 配置环境变量
+4. 配置监听
+5. 配置网络
+
+
+
+
+```
+```
 
 # 达梦数据库(dm8) 
 
@@ -1611,7 +1841,7 @@ BUFFER 	系统缓存大小，单位为：M，默认值：1000 	可修改
 ```bash
 sudo docker run -itd -p 13308:5236 --restart=always  --name=dm8_test --privileged=true -e SYSDBA_PWD=123456789  -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1  -v /usr/local/TzxProject/Dats/dm8:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
 ```
-
+暂时我对这个数据库的初始化设置 是设置了 
 
 测试
 
@@ -1620,7 +1850,7 @@ sudo docker run -itd -p 13308:5236  --name=dm8_test --privileged=true -e LD_LIBR
 ```
 
 ```bash
-sudo docker run -itd -p 13309:5236  --name=dm8_test_2 --privileged=true -e SYSDBA_PWD=123456789 -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1 -v /usr/local/TzxProject/Dats/dm8_2:/opt/dmdbms/data dm8_single:dm8_20240715_rev232765_x86_rh6_64
+sudo docker run -itd -p 13309:5236  --name=dm8_test_2 --privileged=true -e SYSDBA_PWD=123456789 -e LD_LIBRARY_PATH=/opt/dmdbms/bin  -e PAGE_SIZE=16 -e EXTENT_SIZE=32 -e LOG_SIZE=1024 -e UNICODE_FLAG=1 -e LENGTH_IN_CHAR=1  -v /usr/local/TzxProject/Dats/dm8_2:/opt/dmdbms/data dm8:dm8_20240613_rev229704_x86_rh6_64
 
 ```
 
@@ -1687,8 +1917,8 @@ used time: 8.249(ms). Execute id is 65101.
 1. 创建表空间
 
 ```
-create tablespace "TEST" datafile '/opt/dmdbms/data/DAMENG/TEST.DBF' size 128 ;
-create tablespace "TZX" datafile '/opt/dmdbms/data/DAMENG/TZX.DBF'  size 128 ;
+create tablespace TEST datafile '/opt/dmdbms/data/DAMENG/TEST.DBF' size 128 ;
+create tablespace TZX datafile '/opt/dmdbms/data/DAMENG/TZX.DBF'  size 128 ;
 ```
 
 2.创建用户：使用以下 SQL 命令来创建新用户：
@@ -1917,21 +2147,32 @@ SELECT * FROM USER_TAB_PRIVS;
 SELECT * FROM USER_TABLES;
 
 
+修改参数
+
+vim /opt/dmdbms/data/DAMENG/dm.ini
 
 
 
+CREATE DATABASE TEST;
 
 
+-- 使用 dba_tables 视图（需要具有 DBA 权限）
+SELECT 
+    OWNER AS schema_name,
+    TABLE_NAME AS table_name
+FROM 
+    dba_tables
+WHERE 
+    TABLE_NAME = 'ST_PPTN_R';
 
-
-
-
-
-
-
-
-
-
+-- 使用 all_tables 视图（当前用户有访问权限）
+SELECT 
+    OWNER AS schema_name,
+    TABLE_NAME AS table_name
+FROM 
+    all_tables
+WHERE 
+    TABLE_NAME = 'ST_PPTN_R';
 
 
 
