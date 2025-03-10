@@ -1,12 +1,144 @@
 
+[TOC]
 
-# 测试说明
+
+# 环境说明
 
 本次测试使用环境:
    - 测试方式:win10专业版,在vmware中安装ubuntu22.04版本虚拟机(均为x86架构)
    - 在ubuntu22.04虚拟机中安装x86架构20.10.21版本docker
    - docker中安装22.04版本ubuntu容器
    - 测试arm版本的docker安装aarch64版本的qemu模拟器,并安装aarch64版本ubuntu22.04版本镜像容器
+
+
+# Docker 的常用命令
+
+以下是一些常用的 Docker 命令：
+
+
+1. **拉取镜像**：
+   ```bash
+   docker pull <镜像名>
+   ```
+   例如：`docker pull nginx`（拉取Nginx镜像）。
+
+2. **查看容器**：
+   - 正在运行的容器： 
+   ```bash
+   docker ps
+   ```
+   - 所有的容器：
+   ```bash
+   docker ps -a
+   ```
+
+3. **(启动/停止/重启)容器**:
+   - 启动容器：
+   ```bash
+   docker start <容器名/容器ID>
+   ```
+    - 停止容器：
+   ```bash
+   docker stop <容器名/容器ID>
+   ```
+    - 重启容器：
+   ```bash
+   docker restart <容器名/容器ID>
+   ```
+
+4. **命令行进入容器内部**:
+   ```bash
+   docker exec -it <容器名/容器ID> /bin/bash
+   ```
+
+5. **删除容器**：
+   ```bash
+   docker rm <容器ID>
+   ```
+
+6.  **查看镜像**：
+   ```bash
+   docker images
+   ```
+
+7.  **删除镜像**：
+   ```bash
+   docker rmi <镜像名>
+   ```
+
+8.  **容器和宿主机之间复制传输文件**：
+   ```bash
+   docker cp <宿主机文件路径> <容器名/容器ID>:<容器内路径>
+   docker cp <容器名/容器ID>:<容器内路径> <宿主机文件路径>
+   ```
+
+9.  **查看容器日志**：
+   ```bash
+   docker logs <容器名/容器ID>
+   ```
+
+10. **查看容器信息**：
+   ```bash
+   docker inspect <容器名/容器ID>
+   ```
+
+11. **实例化容器**：
+
+  - 创建容器：
+   ```bash
+   docker run -it  --name ublink  ubuntu:22.04  /bin/bash
+   ```
+
+   - 创建容器并创建端口映射
+   ```bash
+   docker run -it -p <宿主机端口>:<容器内端口> --name 容器名称  <镜像名称>  /bin/bash
+
+    docker run -it -p 10020:9090 -p 10021:9091  --name ublink  ubuntu:22.04  /bin/bash
+   ```
+
+   - 创建容器并创建端口映射并挂载目录
+
+   ```bash
+    docker run -it -v  宿主机目录:容器目录 --name 容器名称 <镜像名称> /bin/bash
+
+    docker run -it --name ublink -v /home/ublink:/home/ublink  ubuntu:22.04  /bin/bash
+   ```
+
+12. **设置/关闭容器开机自启动**：
+
+  - 设置容器开机自启动：
+   ```bash
+   docker update --restart=always <容器名/容器ID>
+   ```
+
+  - 关闭容器开机自启动：
+   ```bash
+   docker update --restart=no <容器名/容器ID>
+   ```
+
+
+13. **官方镜像的导入导出**
+
+  - 导出容器：
+  ```bash
+  docker save -o <导出文件名>.tar <官方容器名/官方容器ID>
+  ```
+
+  - 导入容器：
+  ```bash
+  docker load -i <导出文件名>.tar
+  ```
+
+14. **自制容器的导入导出**
+  - 导出容器：
+  ```bash
+  docker export (自制容器名/自制容器ID) > (<导出文件名>.tar )
+  ```
+
+  - 导入容器：
+  ```bash
+  docker import <导出文件名>.tar <自制容器名>
+  ```
 
 
 # 1. docker的安装
@@ -475,7 +607,7 @@
 
 ### 2.21 导入镜像后验证
 
-查看镜像是否存在即ID
+- 查看镜像是否存在即ID
 
    ```shell
    wub@wub:~/Downloads$ sudo docker images
@@ -483,8 +615,7 @@
    ubuntu       latest    01f29b872827   3 weeks ago   77.8MB
 
    ```
-
-然后安装Ubuntu系统
+    然后安装Ubuntu系统
 
 1. 运行容器，并且可以通过 exec 命令进入 ubuntu 容器
 
@@ -497,7 +628,7 @@
 
     ```
 
-1. 启动这个虚拟机
+2. 启动这个虚拟机
 
     ```shell
     sudo docker exec -it docker_ub /bin/bash
@@ -560,65 +691,65 @@
 
 - 可以通过`sudo docker images` 查看是否有 mycontainer.tar包导出的镜像名称如:aaa
 
-```shell
-wub@wub:~/Downloads$ sudo docker images
-REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
-aaa          latest    baa55ebfbd94   36 minutes ago   155MB
-ubuntu       latest    01f29b872827   3 weeks ago      77.8MB
-```
+    ```shell
+    wub@wub:~/Downloads$ sudo docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+    aaa          latest    baa55ebfbd94   36 minutes ago   155MB
+    ubuntu       latest    01f29b872827   3 weeks ago      77.8MB
+    ```
 
 - 创建镜像为一个实例容器
 
-```shell
-sudo docker run -it  --name bbb  aaa  /bin/bash
+    ```shell
+    sudo docker run -it  --name bbb  aaa  /bin/bash
 
-----------------
+    ----------------
 
-wub@wub:~/Downloads$ sudo docker run -it  --name bbb aaa  /bin/bash
-root@e87db5c5413c:/## cd home/docker_test/cout/
-root@e87db5c5413c:/home/docker_test/cout## ls
-libasan.so.5  libltdl.so.7  libodbc.so.2  libtool_lib_name.a  pro_main
-root@e87db5c5413c:/home/docker_test/cout## ./pro_main 
-Start tool_class
-Hello: 0
-Hello: 1
-Hello: 2
-Hello: 3
-^C
-root@e87db5c5413c:/home/docker_test/cout## exit
-exit
-wub@wub:~/Downloads$ sudo docker ps -a
-CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                            PORTS                                         NAMES
-e87db5c5413c   aaa       "/bin/bash"   31 seconds ago   Exited (130) 3 seconds ago                                                      bbb
+    wub@wub:~/Downloads$ sudo docker run -it  --name bbb aaa  /bin/bash
+    root@e87db5c5413c:/## cd home/docker_test/cout/
+    root@e87db5c5413c:/home/docker_test/cout## ls
+    libasan.so.5  libltdl.so.7  libodbc.so.2  libtool_lib_name.a  pro_main
+    root@e87db5c5413c:/home/docker_test/cout## ./pro_main 
+    Start tool_class
+    Hello: 0
+    Hello: 1
+    Hello: 2
+    Hello: 3
+    ^C
+    root@e87db5c5413c:/home/docker_test/cout## exit
+    exit
+    wub@wub:~/Downloads$ sudo docker ps -a
+    CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                            PORTS                                         NAMES
+    e87db5c5413c   aaa       "/bin/bash"   31 seconds ago   Exited (130) 3 seconds ago                                                      bbb
 
-```
+    ```
 
 ## 3.4 创建容器端口映射
 
 
-使用 `docker run` 命令来启动容器并进行端口映射。例如，将容器内部的端口 5000 映射到主机 B 的端口 8081：
+- 使用 `docker run` 命令来启动容器并进行端口映射。例如，将容器内部的端口 5000 映射到主机 B 的端口 8081：
 
- ```shell
-# 单个端口
- sudo docker run -it -p 8081:5000 --name link_ub   ub_sql /bin/bash
-# 多个端口
- sudo docker run -it -p 10020:9090 -p 10021:9091  --name ublink  ubuntu:22.04  /bin/bash
-# 连续端口映射
- sudo docker run -d -p 8000-8010:8000-8010 --name ublink  ubuntu:22.04  /bin/bash # 容器内部的8000到8010端口将依次映射到宿主机的相同范围的端口上
- --------------
- wub@wub:~/Downloads$ sudo docker run -it -p 0.0.0.0:8081:5000 --name link_ub   ub_sql /bin/bash
-  root@e352b1e281f3:/# exit
-  exit
-  wub@wub:~/Downloads$ sudo docker ps -a
-  CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS                                         NAMES
-  e352b1e281f3   ub_sql    "/bin/bash"   13 seconds ago   Exited (0) 2 seconds ago                                                  link_ub
-  e87db5c5413c   aaa       "/bin/bash"   6 hours ago      Up 2 hours                                                                bbb
-  wub@wub:~/Downloads$ sudo docker start e352b1e281f3
-  e352b1e281f3
-  wub@wub:~/Downloads$ sudo docker ps -a
-  CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS                                         NAMES
-  e352b1e281f3   ub_sql    "/bin/bash"   42 seconds ago   Up 1 second                 0.0.0.0:8081->5000/tcp                        link_ub
-  ```
+    ```shell
+    # 单个端口
+    sudo docker run -it -p 8081:5000 --name link_ub   ub_sql /bin/bash
+    # 多个端口
+    sudo docker run -it -p 10020:9090 -p 10021:9091  --name ublink  ubuntu:22.04  /bin/bash
+    # 连续端口映射
+    sudo docker run -d -p 8000-8010:8000-8010 --name ublink  ubuntu:22.04  /bin/bash # 容器内部的8000到8010端口将依次映射到宿主机的相同范围的端口上
+    --------------
+    wub@wub:~/Downloads$ sudo docker run -it -p 0.0.0.0:8081:5000 --name link_ub   ub_sql /bin/bash
+    root@e352b1e281f3:/# exit
+    exit
+    wub@wub:~/Downloads$ sudo docker ps -a
+    CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS                                         NAMES
+    e352b1e281f3   ub_sql    "/bin/bash"   13 seconds ago   Exited (0) 2 seconds ago                                                  link_ub
+    e87db5c5413c   aaa       "/bin/bash"   6 hours ago      Up 2 hours                                                                bbb
+    wub@wub:~/Downloads$ sudo docker start e352b1e281f3
+    e352b1e281f3
+    wub@wub:~/Downloads$ sudo docker ps -a
+    CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS                                         NAMES
+    e352b1e281f3   ub_sql    "/bin/bash"   42 seconds ago   Up 1 second                 0.0.0.0:8081->5000/tcp                        link_ub
+    ```
 
 数据库密码: Abc.123456
 
@@ -626,77 +757,74 @@ e87db5c5413c   aaa       "/bin/bash"   31 seconds ago   Exited (130) 3 seconds a
 ### 3.4.1 修改容器的端口映射
 
 1. 查询容器的完整ID
- ```shell
- 
- ```
- ```shell
-wub@wub:~$ sudo docker inspect silly_utils_1 |grep Id
-        "Id": "e13796630166625b69ee492a2e29176677e3b239668a9b57acdab492d77f917d",
-wub@wub:~$ 
- ```
+
+    ```shell
+        wub@wub:~$ sudo docker inspect silly_utils_1 |grep Id
+                "Id": "e13796630166625b69ee492a2e29176677e3b239668a9b57acdab492d77f917d",
+        wub@wub:~$ 
+    ```
 
 2. 关闭容器和docker
 
 
- ```shell
- sudo docker stop silly_utils_1
- sudo systemctl stop docker
- ```
+    ```shell
+    sudo docker stop silly_utils_1
+    sudo systemctl stop docker
+    ```
 
 
 3. 进到/var/lib/docker/containers 目录下找到与 Id 相同的目录，修改 hostconfig.json 和 config.v2.json文件：
 
   1. hostconfig.json文件中添加 `"PortBindings": {"8081/tcp": [{"HostIp": "","HostPort": "5001"}],"8085/tcp": [{"HostIp": "","HostPort": "5005"}]},`,如下,下面仅hostconfig.json文件部分(8081/tcp:表示容器的端口,"HostPort": "5001":表示宿主机的端口)
-   ```json
-    "Binds": [
-        "/usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static"
-    ],
-    "ContainerIDFile": "",
-    "LogConfig": {
-        "Type": "json-file",
-        "Config": {}
-    },
-    "NetworkMode": "default",
-    "PortBindings": {
-        "8081/tcp": [
-            {
-                "HostIp": "",
-                "HostPort": "5001"
-            }
-        ],
-        "8085/tcp": [
-            {
-                "HostIp": "",
-                "HostPort": "5005"
-            }
-        ]
-    },
-    "PortBindings": {},
-    "RestartPolicy": {
-        "Name": "no",
-        "MaximumRetryCount": 0
-    },
-    ```
+        ```json
+            "Binds": [
+                "/usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "8081/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "5001"
+                    }
+                ],
+                "8085/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "5005"
+                    }
+                ]
+            },
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+        ```
 
     1. config.v2.json文件中添加`"ExposedPorts": {"8081/tcp": {},"8085/tcp": {}},`,如下,下面仅config.v2.json文件部分  这里的端口为容器的开放端口
-     ```json
-    "Managed": false,
-    "Path": "/bin/bash",
-    "Args": [],
-    "Config": {
-        "Hostname": "e13796630166",
-        "Domainname": "",
-        "User": "",
-        "AttachStdin": true,
-        "AttachStdout": true,
-        "AttachStderr": true,
-        "ExposedPorts": {
-            "8081/tcp": {},
-            "8082/tcp": {}
-        },
-        "Tty": true,
-
-      ```
+        ```json
+        "Managed": false,
+        "Path": "/bin/bash",
+        "Args": [],
+        "Config": {
+            "Hostname": "e13796630166",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": true,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "8081/tcp": {},
+                "8082/tcp": {}
+            },
+            "Tty": true,
+        ```
 
 
 4. 重启容器和docker
@@ -1496,7 +1624,77 @@ sudo docker run -it -p 10020:9090 -p 10021:9091 -v /home/wkl/test2:/home/test_sh
 ```
 
 
-# 创建MySQL容器
+-----
+
+docker容器启动后的流程顺序
+
+当你执行 `docker start <container-name>` 命令时，Docker 会尝试启动一个已经存在的容器，而不是创建一个新的容器。这里的“容器已经存在”意味着容器之前已经被创建，并且它的文件系统、网络设置等都已经存在。
+
+### `docker start <container-name>` 的执行步骤
+
+执行 `docker start` 后，容器的启动过程可以分为以下几个关键阶段：
+
+### 1. **Docker守护进程检查容器的状态**
+   - 当你执行 `docker start <container-name>` 时，Docker 守护进程会先检查容器的当前状态。
+     - 如果容器已停止（但没有被删除），Docker 会将其标记为“已启动”并将其状态更新为“正在运行”。
+     - 如果容器处于运行状态，则不会有任何变化。
+     - 如果容器不存在，Docker 会提示错误。
+
+### 2. **恢复容器的网络设置**
+   - Docker 会恢复容器的网络配置，重新将容器连接到 Docker 网络。如果在创建容器时指定了自定义网络，则会将其连接到该网络。
+   - 如果你使用了端口映射（例如 `-p` 参数），这些端口映射仍然保持有效。
+
+   在启动过程中，Docker 会重新配置以下内容：
+   - 容器的网络接口。
+   - 容器与主机或其他容器之间的端口映射。
+   - 容器的 DNS 配置和主机名设置。
+
+### 3. **恢复容器挂载的卷**
+   - 如果容器使用了 Docker 卷（`-v` 或 `--mount` 选项），Docker 会恢复卷的挂载，确保容器能够访问存储在卷中的数据。
+   - 卷通常用于存储容器的持久化数据，它与容器的生命周期是分开的。
+
+### 4. **重新启动容器内的主进程**
+   - 容器启动时，Docker 会检查容器是否已经运行。如果容器之前处于停止状态，Docker 会重新启动容器内的主进程。
+   - 主进程是由镜像中定义的 `ENTRYPOINT` 或 `CMD` 指令启动的，通常是容器内应用程序的执行文件。
+   - 如果容器已停止，`docker start` 会启动主进程并运行应用程序。
+
+### 5. **容器的标准输出和错误输出**
+   - 启动后，容器会开始执行应用程序。容器的标准输出（stdout）和错误输出（stderr）将被发送到 Docker 的日志系统，开发者可以使用 `docker logs <container-name>` 来查看日志。
+   
+   如果是交互式容器，用户可以附加到容器的终端，通过 `docker attach <container-name>` 来查看容器的实时输出。
+
+### 6. **容器运行时的资源分配与管理**
+   - 在容器启动后，Docker 会继续管理容器的资源，包括：
+     - **CPU、内存、网络等资源的限制**：如果在创建容器时指定了资源限制（如 `--memory`、`--cpus`），这些资源限制会在容器启动后生效。
+     - **容器日志**：Docker 会持续收集容器的日志信息。
+   
+   Docker 会保持容器在后台运行，直到容器内的主进程退出或用户手动停止容器。
+
+### 7. **容器停止与退出**
+   - 一旦容器的主进程（通常是运行的应用程序）退出，容器会停止。如果容器是以交互模式启动的，用户可以手动停止容器（例如通过发送 `exit` 命令或按 `Ctrl+C`）。
+
+### 8. **容器的退出状态**
+   - 容器在停止后会保存退出状态码，可以通过 `docker ps -a` 查看容器的退出状态。
+   - 容器退出时，Docker 会显示容器退出的状态和退出代码，通常会告诉你容器正常结束、崩溃或发生错误。
+
+### 举个例子：
+假设你有一个名为 `my_container` 的容器，并且它已经停止了，现在你执行 `docker start my_container`。
+
+1. Docker 检查容器的状态，确认容器处于停止状态。
+2. Docker 恢复容器的网络设置（如果有指定网络）。
+3. 恢复挂载的卷和共享目录（如果有）。
+4. 启动容器中的主进程（例如 `CMD` 或 `ENTRYPOINT` 中指定的应用程序）。
+5. 容器开始运行，你可以通过 `docker logs my_container` 来查看它的输出日志。
+
+如果容器内的应用程序停止了，容器将退出。
+
+### 总结：
+`docker start` 命令启动一个已经创建但处于停止状态的容器，整个流程包括恢复容器的网络配置、挂载的卷以及启动容器内的主进程。在启动过程中，容器会按照镜像中的 `ENTRYPOINT` 或 `CMD` 指令运行应用程序，并继续管理容器的资源直到容器退出。
+
+-----
+
+
+# MySQL容器
 
 - 拉取镜像
 
@@ -1532,7 +1730,7 @@ sudo docker run -it --name mysql_test -p 3306:3306  --restart=always -v /mydata/
 sudo docker run -itd --restart=always --name mysql_svr -v /usr/local/TzxProject/Dats/mysql/log:/var/log/mysql -v /usr/local/TzxProject/Dats/mysql/data:/var/lib/mysql  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:latest
 
 # mysql8.3.0
-sudo mkdir /home//mysql_83/conf/conf.d
+sudo mkdir /home/l/mysql_83/conf/conf.d
 sudo docker run -itd --name mysql_83 -p 13309:3306  --restart=always -v /home/l/mysql_83/data:/var/lib/mysql -v /home/l/mysql_83/log:/var/log/mysql -v /home/l/mysql_83/conf:/etc/mysql/ -e MYSQL_ROOT_PASSWORD=123456 -e TZ=Asia/Shanghai mysql:8.3.0
 
 ```
@@ -1608,19 +1806,7 @@ sudo docker run -itd --name sqlserver_1 -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------------------------------------------------------------------------------------------
-
+------------------------------------------------------------------------------------------------------------
 
 # oracle 容器
 
@@ -2175,6 +2361,133 @@ WHERE
     TABLE_NAME = 'ST_PPTN_R';
 
 
+
+# ftp
+
+```bash
+# 必须要绑定端口
+sudo docker run -itd -p 18020-18022:8020-8022 -v /usr/local/TzxProject/Ftp/ftp_svr_1:/home/test_1_ftp --name ftp_svr_1 centos7_ftp:v1  /bin/bash
+```
+
+## 添加新用户
+
+```bash
+
+1. 添加因用户
+sudo adduser test_1
+
+2. 修改密码
+sudo passwd test_1
+
+
+3. 添加用户到vsftp用户裂变里
+vim /etc/vsftpd/user_list
+将test_1添加到user_list中
+
+4. 如果想设置某个用户的权限创建/etc/vsftpd/userconfig目录
+然后再这个目录下创建一用户名为文件名的文件
+vim /etc/vsftpd/userconfig/test_1
+添加以下内容
+
+[root@bc89e199b2f1 vsftpd]# sl
+bash: sl: command not found
+[root@bc89e199b2f1 vsftpd]# ls
+ftpusers  user_list  userconfig  vsftpd.conf  vsftpd_conf_migrate.sh
+[root@bc89e199b2f1 vsftpd]# cd userconfig/
+[root@bc89e199b2f1 userconfig]# ls
+huaxun  tzx
+[root@bc89e199b2f1 userconfig]# cat huaxun
+local_root=/home/huaxun/
+
+
+```
+
+
+vsftpd.conf文件如下
+
+```bash
+ with the listen_ipv6 directive.
+listen=YES
+#
+# This directive enables listening on IPv6 sockets. By default, listening
+# on the IPv6 "any" address (::) will accept connections from both IPv6
+# and IPv4 clients. It is not necessary to listen on *both* IPv4 and IPv6
+# sockets. If you want that (perhaps because you want to listen on specific
+# addresses) then you must run two copies of vsftpd with two configuration
+# files.
+# Make sure, that one of the listen options is commented !!
+listen_ipv6=NO
+
+pam_service_name=vsftpd
+userlist_enable=YES
+tcp_wrappers=YES
+
+# self add
+
+userlist_file=/etc/vsftpd/user_list
+userlist_deny=NO
+tcp_wrappers=YES
+listen_port=8021
+port_enable=NO
+pasv_enable=YES
+pasv_min_port=8022
+pasv_max_port=8024
+local_root=/home
+user_config_dir=/etc/vsftpd/userconfig
+
+pasv_address=192.168.2.175
+
+reverse_lookup_enable=NO
+
+```
+
+user_list是允许访问的用户,将t
+```bash
+[root@bc89e199b2f1 vsftpd]# cat user_list
+# vsftpd userlist
+# If userlist_deny=NO, only allow users in this file
+# If userlist_deny=YES (default), never allow users in this file, and
+# do not even prompt for a password.
+# Note that the default vsftpd pam config also checks /etc/vsftpd/ftpusers
+# for users that are denied.
+#root
+bin
+daemon
+adm
+lp
+sync
+shutdown
+halt
+mail
+news
+uucp
+operator
+games
+nobody
+tzx
+huaxun
+
+
+
+[root@bc89e199b2f1 vsftpd]# cat ftpusers
+# Users that are not allowed to login via ftp
+bin
+daemon
+adm
+lp
+sync
+shutdown
+halt
+mail
+news
+uucp
+operator
+games
+nobody
+[root@bc89e199b2f1 vsftpd]#
+
+
+```
 
 
 
